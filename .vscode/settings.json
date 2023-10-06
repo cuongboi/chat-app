@@ -1,0 +1,18 @@
+{
+  "editor.tabSize": 2,
+  "editor.rulers": [160, 180],
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.trimTrailingWhitespace": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "WillLuke.nextjs.addTypesOnSave": true,
+  "WillLuke.nextjs.hasPrompted": true
+}
