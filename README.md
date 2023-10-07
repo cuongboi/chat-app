@@ -2,7 +2,6 @@
 
 ![Copy of Copy of Fullstack Twitter Clone (1)](https://user-images.githubusercontent.com/23248726/236631198-90414da5-ee43-46a9-8898-70b003bcd83d.png)
 
-
 This is a repository for a Real-Time Messenger Clone: Next.js 13, React, Tailwind, Prisma, MongoDB, NextAuth, Pusher.
 
 [VIDEO TUTORIAL](https://www.youtube.com/watch?v=PGPGcKBpAk8)
@@ -34,7 +33,6 @@ Key Features:
 
 Whether you're an experienced developer looking to expand your skillset or a beginner eager to learn the latest web development technologies, this tutorial has something for everyone. Join us on this exciting journey and take your web development skills to new heights!
 
-
 ### Prerequisites
 
 **Node version 14.x**
@@ -52,7 +50,6 @@ npm i
 ```
 
 ### Setup .env file
-
 
 ```js
 DATABASE_URL=
@@ -88,6 +85,8 @@ npm run dev
 
 Running commands with npm `npm run [command]`
 
-| command         | description                              |
-| :-------------- | :--------------------------------------- |
-| `dev`           | Starts a development instance of the app |
+| command | description                              |
+| :------ | :--------------------------------------- |
+| `dev`   | Starts a development instance of the app |
+
+peerjs --port 443 --key peerjs --path /peerjs --sslkey "/etc/letsencrypt/live/chat-app.byme.vn/privkey.pem" --sslcert "/etc/letsencrypt/live/chat-app.byme.vn/cert.pem"

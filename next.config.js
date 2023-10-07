@@ -1,7 +1,4 @@
 /** @type {import('next').NextConfig} */
-require("./.firebase/init");
-require("./jobs/notifier");
-
 const nextConfig = {
   experimental: {
     appDir: true,

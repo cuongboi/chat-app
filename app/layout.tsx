@@ -2,7 +2,6 @@ import "./globals.css";
 import AuthContext from "./context/AuthContext";
 import ActiveStatus from "./components/ActiveStatus";
 import ToasterContext from "./context/ToasterContext";
-import { SessionProvider } from "next-auth/react";
 
 export const metadata = {
   title: "Messenger",
