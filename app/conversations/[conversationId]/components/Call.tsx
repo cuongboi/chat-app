@@ -108,7 +108,6 @@ const Call: React.FC<{
     });
 
     connect.on("data", async (data: any) => {
-      console.log(data);
       switch (data.type) {
         case CallStatus.REQUEST:
           setCallOptions(data.options);
