@@ -6,12 +6,18 @@ import Body from "./components/Body";
 import Form from "./components/Form";
 import ProfileColumm, { ProfileDivider } from "./components/ProfileColumn";
 import EmptyState from "@/app/components/EmptyState";
+import getLastConversation from "@/app/actions/getLastConversation";
 
 interface IParams {
   conversationId: string;
 }
 
 const ChatId = async ({ params }: { params: IParams }) => {
+  if (!params.conversationId) {
+    const lastConversation = await getLastConversation();
+    params.conversationId = lastConversation?.id!;
+  }
+
   const [conversation, messages] = await Promise.all([
     getConversationById(params.conversationId),
     getMessages(params.conversationId),

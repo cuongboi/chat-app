@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { IoClose, IoTrash } from "react-icons/io5";
 import { Conversation, User } from "@prisma/client";
 import { format } from "date-fns";
@@ -12,13 +12,16 @@ import Avatar from "@/app/components/Avatar";
 import AvatarGroup from "@/app/components/AvatarGroup";
 import ConfirmModal from "./ConfirmModal";
 import { create } from "zustand";
+import { isMobile } from "react-device-detect";
 
 export const useProfileColumn = create<{
   isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
   toggle: () => void;
   close: () => void;
 }>((set) => ({
   isOpen: true,
+  setIsOpen: (isOpen: boolean) => set({ isOpen }),
   toggle: () =>
     set((state: { isOpen: boolean }) => ({ isOpen: !state.isOpen })),
   close: () => set({ isOpen: false }),
@@ -46,7 +49,15 @@ const ProfileColumn: React.FC<{
 }> = ({ data }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const otherUser = useOtherUser(data);
-  const { isOpen, close } = useProfileColumn();
+  const { isOpen, close, setIsOpen } = useProfileColumn();
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsOpen(false);
+    } else {
+      setIsOpen(true);
+    }
+  }, [isMobile]);
 
   const joinedDate = useMemo(() => {
     return format(new Date(otherUser.createdAt), "PP");

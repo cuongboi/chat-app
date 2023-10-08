@@ -72,33 +72,7 @@ const Call: React.FC<{
     });
 
     peer.on("connection", (connect: any) => {
-      connect.on("data", async (data: any) => {
-        switch (data.type) {
-          case CallStatus.REQUEST:
-            setCallOptions(data.options);
-            setIsWaiting(true);
-            break;
-          case CallStatus.ACCEPT:
-            setIsWaiting(false);
-            setIsCalling(true);
-            myStream.current = await getStream(callOptions);
-
-            if (myVideoRef.current) {
-              myVideoRef.current.srcObject = myStream.current;
-            }
-
-            const call = peer.call(otherUser.id, myStream.current);
-            call.on("stream", (remoteStream: any) => {
-              peerVideoRef.current!.srcObject = remoteStream;
-            });
-            break;
-          case CallStatus.CANCEL:
-            endCall();
-            break;
-          default:
-            break;
-        }
-      });
+      createEvent(connect);
     });
 
     peer.on("call", async (call: any) => {
@@ -108,34 +82,62 @@ const Call: React.FC<{
       }
       call.answer(myStream.current); // Answer the call with an A/V stream.
       call.on("stream", function (remoteStream: MediaStream) {
-        peerVideoRef.current!.srcObject = remoteStream;
-      });
-    });
-
-    eventEmitter.on("connect", (connect, options: VideoCallOptions) => {
-      connect.send({
-        type: CallStatus.REQUEST,
-        options,
-      });
-
-      eventEmitter.on(CallStatus.ACCEPT, async () => {
-        connect.send({
-          type: CallStatus.ACCEPT,
-        });
-        setIsWaiting(false);
-        setIsCalling(true);
-      });
-
-      eventEmitter.on(CallStatus.CANCEL, () => {
-        connect.send({
-          type: CallStatus.CANCEL,
-        });
-        endCall();
+        if (remoteStream && peerVideoRef.current) {
+          peerVideoRef.current!.srcObject = remoteStream;
+        }
       });
     });
 
     return peer;
   }, [session?.user?.id]);
+
+  const createEvent = (connect: any) => {
+    eventEmitter.once(CallStatus.ACCEPT, async () => {
+      connect.send({
+        type: CallStatus.ACCEPT,
+      });
+      setIsWaiting(false);
+      setIsCalling(true);
+    });
+
+    eventEmitter.once(CallStatus.CANCEL, () => {
+      connect.send({
+        type: CallStatus.CANCEL,
+      });
+      endCall();
+    });
+
+    connect.on("data", async (data: any) => {
+      console.log(data);
+      switch (data.type) {
+        case CallStatus.REQUEST:
+          setCallOptions(data.options);
+          setIsWaiting(true);
+          break;
+        case CallStatus.ACCEPT:
+          setIsWaiting(false);
+          setIsCalling(true);
+          myStream.current = await getStream(callOptions);
+
+          if (myVideoRef.current) {
+            myVideoRef.current.srcObject = myStream.current;
+          }
+
+          const call = peer.call(otherUser.id, myStream.current);
+          call.on("stream", (remoteStream: any) => {
+            if (peerVideoRef.current && remoteStream) {
+              peerVideoRef.current!.srcObject = remoteStream;
+            }
+          });
+          break;
+        case CallStatus.CANCEL:
+          endCall();
+          break;
+        default:
+          break;
+      }
+    });
+  };
 
   const getStream = async (options: VideoCallOptions) => {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -149,7 +151,12 @@ const Call: React.FC<{
   const call = (options: VideoCallOptions) => {
     const connect = peer.connect(otherUser.id);
     connect.on("open", () => {
-      eventEmitter.emit("connect", connect, options);
+      connect.send({
+        type: CallStatus.REQUEST,
+        options,
+      });
+
+      createEvent(connect);
     });
     setCallOptions(options);
     setIsWaiting(true);
@@ -199,7 +206,7 @@ const Call: React.FC<{
               <div className="p-4 text-center">
                 <div className="mb-6">
                   <Image
-                    src={otherUser?.image! || "/images/avatar.png"}
+                    src={otherUser?.image || "/images/placeholder.jpg"}
                     alt=""
                     className="w-24 h-24 mx-auto rounded-full"
                     width={96}
