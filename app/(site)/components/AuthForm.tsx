@@ -172,7 +172,7 @@ const AuthForm = () => {
             </div>
           </div>
 
-          <div className="mt-6 flex gap-2">
+          {/* <div className="mt-6 flex gap-2">
             <AuthSocialButton
               icon={BsGithub}
               onClick={() => socialAction("github")}
@@ -181,7 +181,7 @@ const AuthForm = () => {
               icon={BsGoogle}
               onClick={() => socialAction("google")}
             />
-          </div>
+          </div> */}
         </div>
         <div
           className="

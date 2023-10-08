@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { pusherServer } from "@/app/libs/pusher";
 
 import prisma from "@/app/libs/prismadb";
 
@@ -66,7 +67,7 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
-  debug: process.env.NODE_ENV === "development",
+  // debug: process.env.NODE_ENV === "development",
   session: {
     strategy: "jwt",
   },
@@ -75,7 +76,7 @@ export const authOptions: AuthOptions = {
     signIn: "/",
   },
   callbacks: {
-    jwt({ token, account, user }) {
+    jwt({ token, account, user, trigger }) {
       if (account) {
         token.uid = String(user.id);
       }

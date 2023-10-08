@@ -2,16 +2,11 @@ import bcrypt from "bcrypt";
 
 import prisma from "@/app/libs/prismadb";
 import { NextResponse } from "next/server";
+import { pusherServer } from "@/app/libs/pusher";
 
-export async function POST(
-  request: Request
-) {
+export async function POST(request: Request) {
   const body = await request.json();
-  const {
-    email,
-    name,
-    password
-  } = body;
+  const { email, name, password } = body;
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -19,9 +14,11 @@ export async function POST(
     data: {
       email,
       name,
-      hashedPassword
-    }
+      hashedPassword,
+    },
   });
+
+  await pusherServer.trigger("users", "new-user", user);
 
   return NextResponse.json(user);
 }

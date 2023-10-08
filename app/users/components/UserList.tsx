@@ -3,12 +3,21 @@
 import { User } from "@prisma/client";
 
 import UserBox from "./UserBox";
+import { useEffect } from "react";
+import { pusherClient } from "@/app/libs/pusher";
 
 interface UserListProps {
   items: User[];
 }
 
 const UserList: React.FC<UserListProps> = ({ items }) => {
+  useEffect(() => {
+    pusherClient.subscribe("users");
+    pusherClient.bind("new-user", (data: any) => {
+      items.push(data);
+    });
+  }, []);
+
   return (
     <aside
       className="
