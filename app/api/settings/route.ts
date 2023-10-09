@@ -30,3 +30,21 @@ export async function POST(request: Request) {
     return new NextResponse("Error", { status: 500 });
   }
 }
+
+export async function PUT(request: Request) {
+  const currentUser = await getCurrentUser();
+  const body = await request.json();
+
+  if (!currentUser?.id) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const resp = await prisma.user.update({
+    where: {
+      id: currentUser.id,
+    },
+    data: body,
+  });
+
+  return NextResponse.json(resp);
+}

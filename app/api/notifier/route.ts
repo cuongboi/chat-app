@@ -1,4 +1,3 @@
-import { beamsClient } from "@/app/libs/beam";
 import prisma from "@/app/libs/prismadb";
 
 export async function GET() {
@@ -9,6 +8,7 @@ export async function GET() {
           id: true,
           email: true,
           notification: true,
+          deviceToken: true,
         },
       },
       messages: {
@@ -26,6 +26,8 @@ export async function GET() {
       },
     },
   });
+
+  const pushNotificationList: any[] = [];
 
   conversations.forEach(async (conversation) => {
     if (conversation.messages.length > 0) {
@@ -47,32 +49,38 @@ export async function GET() {
         (unseenUser.notification === 2 &&
           message.createdAt.getTime() > Date.now() - 3600000)
       ) {
-        await beamsClient
-          .publishToInterests([`user-${unseenUser.id}`], {
-            web: {
-              time_to_live: 3600,
-              notification: {
-                title: "New message",
-                body: "body",
-                deep_link:
-                  "https://chat-app-delta-two.vercel.app/conversations",
-                icon: "https://via.placeholder.com/150",
-              },
-            },
-          })
-          .then(async () => {
-            await prisma.message.update({
-              where: {
-                id: message.id,
-              },
-              data: {
-                hasNotification: true,
-              },
-            });
-          });
+        pushNotificationList.push({
+          user: unseenUser,
+          message: message.id,
+        });
       }
     }
   });
+
+  if (pushNotificationList.length > 0) {
+    const message = firebaseAdmin.messaging();
+    const tokens: string[] = [];
+
+    pushNotificationList.forEach((item) => {
+      tokens.concat(item.user.deviceToken || []);
+    });
+
+    const payload = {
+      notification: {
+        title: "New message",
+        body: "You have a new message",
+        icon: "https://via.placeholder.com/150",
+      },
+      data: {
+        messageId: pushNotificationList[0].message,
+      },
+    };
+
+    await message.sendToDevice(tokens, payload, {
+      priority: "high",
+      timeToLive: 60 * 60,
+    });
+  }
 
   return new Response(JSON.stringify({}));
 }

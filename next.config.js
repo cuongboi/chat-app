@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+require("./.firebase/init");
 const nextConfig = {
   experimental: {
     appDir: true,
