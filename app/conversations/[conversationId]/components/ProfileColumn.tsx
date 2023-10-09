@@ -88,7 +88,7 @@ const ProfileColumn: React.FC<{
         isOpen={confirmOpen}
         onClose={() => setConfirmOpen(false)}
       />
-      <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+      <div className="flex h-full flex-col overflow-y-scroll bg-white py-6">
         <div className="px-4 sm:px-6 ">
           <div className="flex md:hidden items-start justify-end">
             <div className="ml-3 flex h-7 items-center">

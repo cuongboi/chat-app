@@ -55,6 +55,7 @@ const Call: React.FC<{
   const [isWaiting, setIsWaiting] = useState<boolean>(false);
   const [isCalling, setIsCalling] = useState<boolean>(false);
   const [isMyCall, setIsMyCall] = useState<boolean>(false);
+  const audioElement = useRef<HTMLAudioElement | undefined>();
   const [callOptions, setCallOptions] = useState<VideoCallOptions>({
     video: true,
     audio: true,
@@ -98,6 +99,7 @@ const Call: React.FC<{
       });
       setIsWaiting(false);
       setIsCalling(true);
+      audioElement.current?.pause();
     });
 
     eventEmitter.once(CallStatus.CANCEL, () => {
@@ -112,10 +114,12 @@ const Call: React.FC<{
         case CallStatus.REQUEST:
           setCallOptions(data.options);
           setIsWaiting(true);
+          audioRing();
           break;
         case CallStatus.ACCEPT:
           setIsWaiting(false);
           setIsCalling(true);
+          audioElement.current?.pause();
           myStream.current = await getStream(callOptions);
 
           if (myVideoRef.current) {
@@ -160,6 +164,7 @@ const Call: React.FC<{
     setCallOptions(options);
     setIsWaiting(true);
     setIsMyCall(true);
+    audioRing();
   };
 
   const endCall = () => {
@@ -173,6 +178,13 @@ const Call: React.FC<{
     myStream.current?.getTracks().forEach((track) => {
       track.stop();
     });
+    audioElement.current?.pause();
+  };
+
+  const audioRing = () => {
+    audioElement.current = new Audio("/media/mcs.mp3");
+    audioElement.current.loop = true;
+    audioElement.current.play();
   };
 
   return (

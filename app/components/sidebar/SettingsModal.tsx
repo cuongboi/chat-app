@@ -12,6 +12,8 @@ import Modal from "../modals/Modal";
 import Button from "../Button";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+import Select from "../inputs/Select";
+import Radio from "../inputs/Radio";
 
 interface SettingsModalProps {
   isOpen?: boolean;
@@ -88,6 +90,26 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 errors={errors}
                 required
                 register={register}
+              />
+              <Radio
+                register={register}
+                id="notification"
+                label="Notification"
+                defaultValue={currentUser.notification || 1}
+                options={[
+                  {
+                    value: 0,
+                    label: "Disable",
+                  },
+                  {
+                    value: 1,
+                    label: "Enable",
+                  },
+                  {
+                    value: 2,
+                    label: "After 1 hour",
+                  },
+                ]}
               />
               <div>
                 <label
