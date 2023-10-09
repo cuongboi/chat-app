@@ -27,6 +27,8 @@ export const PusherNotification = () => {
     } catch (error) {
       // eslint-disable-next-line no-console
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.data?.user?.email]);
 
   return null;

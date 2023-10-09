@@ -34,9 +34,6 @@ export async function GET() {
       const unseenUser = conversation.users.find(
         (user) => !seenIds.includes(user.id)
       );
-
-      console.log(unseenUser, message);
-
       if (
         !unseenUser ||
         unseenUser.notification === 0 ||
