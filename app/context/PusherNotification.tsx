@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Client } from "@pusher/push-notifications-web";
 import { useSession } from "next-auth/react";
 import * as firebase from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export const PusherNotification = () => {
   const session = useSession();
@@ -29,6 +29,13 @@ export const PusherNotification = () => {
     const initial = async () => {
       try {
         const messaging = getMessaging();
+
+        onMessage(messaging, (payload: any) => {
+          console.log("Message received. ", payload);
+          toast.success(payload.notification.body, {
+            duration: 5000,
+          });
+        });
 
         getToken(messaging, {
           vapidKey:
