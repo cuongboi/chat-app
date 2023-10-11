@@ -32,9 +32,11 @@ export const PusherNotification = () => {
 
         onMessage(messaging, (payload: any) => {
           console.log("Message received. ", payload);
-          toast.success(payload.notification.body, {
-            duration: 5000,
-          });
+          if (payload?.notification?.body) {
+            toast.success(payload?.notification?.body, {
+              duration: 5000,
+            });
+          }
         });
 
         getToken(messaging, {
